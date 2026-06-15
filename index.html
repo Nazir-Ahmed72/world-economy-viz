@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Economy Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson@3"></script>
+</head>
+<body>
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading dashboard...</p>
+    </div>
+
+    <div class="error-message" id="error-message"></div>
+
+    <div class="dashboard-container">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <h1 class="sidebar-title">Global Economy Dashboard</h1>
+                
+                <div class="filter-section">
+                    <label for="country-select">Select Countries:</label>
+                    <select id="country-select" multiple size="8"></select>
+                </div>
+
+                <div class="filter-section">
+                    <label for="year-slider">Year Range:</label>
+                    <div class="year-range-container">
+                        <input type="range" id="year-slider" min="2000" max="2022" value="2000" class="slider">
+                        <div class="year-labels">
+                            <span id="year-min">2000</span> - <span id="year-max">2022</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="apply-btn" class="btn btn-primary">Apply Filters</button>
+                    <button id="reset-btn" class="btn btn-secondary">Reset Filters</button>
+                </div>
+
+                <div class="market-snapshot">
+                    <div class="snapshot-title">📊 Market Snapshot</div>
+                    <div id="market-snapshot-rows"></div>
+                </div>
+
+                <nav class="navigation">
+                    <h3>Charts</h3>
+                    <!-- <a href="#kpi-section" class="nav-link">📊 KPI Cards</a>
+                    <a href="#table-section" class="nav-link">📋 Data Table</a> -->
+                    <a href="#line-chart" class="nav-link">GDP Growth</a>
+                    <a href="#bar-chart" class="nav-link">Unemployment</a>
+                    <a href="#bubble-chart" class="nav-link">GDP vs Inflation</a>
+                    <a href="#heatmap" class="nav-link">Correlation</a>
+                    <a href="#scatter-plot" class="nav-link">Phillips Curve</a>
+                    <a href="#area-chart" class="nav-link">Public Debt</a>
+                    <a href="#pie-chart" class="nav-link">Gov. Finance</a>
+                    <a href="#choropleth-map" class="nav-link">World Map</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            <!-- KPI Cards -->
+            <!-- <section id="kpi-section" class="chart-section">
+                <div class="chart-header">
+                    <h2>Key Economic Indicators</h2>
+                    <p>Aggregated metrics from filtered data — updates with filters</p>
+                </div>
+                <div id="kpi-container"></div>
+            </section> -->
+
+            <!-- Data Table -->
+            <!-- <section id="table-section" class="chart-section">
+                <div class="chart-header">
+                    <h2>Country Comparison Table</h2>
+                    <p>Click any column header to sort. Search by country name.</p>
+                </div>
+                <div id="data-table-container"></div>
+            </section> -->
+
+            <!-- GDP Growth Over Time -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>GDP Growth Over Time</h2>
+                    <p>Annual GDP growth rate (%) by country over 2000-2022</p>
+                </div>
+                <div class="chart-card">
+                    <div id="line-chart"></div>
+                </div>
+            </section>
+
+            <!-- Unemployment Rate by Country -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>Unemployment Rate by Country</h2>
+                    <p>Average unemployment rate (%) - Top 20 countries</p>
+                </div>
+                <div class="chart-card">
+                    <div id="bar-chart"></div>
+                </div>
+            </section>
+
+            <!-- GDP vs Inflation -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>GDP vs Inflation</h2>
+                    <p>Bubble size represents total GDP; bubble position shows GDP per capita vs inflation rate</p>
+                </div>
+                <div class="chart-card">
+                    <div id="bubble-chart"></div>
+                </div>
+            </section>
+
+            <!-- Correlation Heatmap -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>Economic Indicators Correlation</h2>
+                    <p>Pearson correlation between key economic indicators</p>
+                </div>
+                <div class="chart-card">
+                    <div id="heatmap"></div>
+                </div>
+            </section>
+
+            <!-- Phillips Curve (Scatter Plot) -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>Phillips Curve: Unemployment vs Inflation</h2>
+                    <p>Relationship between unemployment and inflation rates with regression line</p>
+                </div>
+                <div class="chart-card">
+                    <div id="scatter-plot"></div>
+                </div>
+            </section>
+
+            <!-- Public Debt Over Time -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>Public Debt Over Time</h2>
+                    <p>Stacked area chart of public debt (% of GDP) - Top 6 countries</p>
+                </div>
+                <div class="chart-card">
+                    <div id="area-chart"></div>
+                </div>
+            </section>
+
+            <!-- Government Finance -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>Government Finance Breakdown</h2>
+                    <p>Average distribution of government expenses, revenue, and tax revenue</p>
+                </div>
+                <div class="chart-card">
+                    <div id="pie-chart"></div>
+                </div>
+            </section>
+
+            <!-- World GDP Map -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <h2>GDP per Capita World Map</h2>
+                    <p>Average GDP per capita (USD) by country, 2000-2022</p>
+                </div>
+                <div class="chart-card">
+                    <div id="choropleth-map"></div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>Course: DSC327 - Data Visualization Techniques</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Shared Tooltip -->
+    <div class="tooltip"></div>
+
+    <!-- Chart Scripts -->
+    <script src="charts/lineChart.js"></script>
+    <script src="charts/barChart.js"></script>
+    <script src="charts/bubbleChart.js"></script>
+    <script src="charts/heatmap.js"></script>
+    <script src="charts/scatterPlot.js"></script>
+    <script src="charts/areaChart.js"></script>
+    <script src="charts/pieChart.js"></script>
+    <script src="charts/choroplethMap.js"></script>
+    <!-- <script src="charts/kpiCards.js"></script> -->
+    <script src="main.js"></script>
+</body>
+</html>
