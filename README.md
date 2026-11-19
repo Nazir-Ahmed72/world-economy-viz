@@ -3,9 +3,6 @@
 ## Course
 DSC327 - Data Visualization Techniques
 
-## Team Members
-- [Student 1 Name]
-- [Student 2 Name]
 
 ## Dataset
 File: data/world_bank_data_2025.csv
